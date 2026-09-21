@@ -1,28 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useParams } from "react-router";
+import { Link, NavLink, Outlet, useParams, useNavigate } from "react-router";
 import { getDetails, getImageUrl } from "../../../shared/api/tmdbAPI";
 import { cn } from "../../../shared/utils/cn";
 import Skeleton from "../../ui/Skeleton";
 
 const MovieDetails = () => {
   const { movieId } = useParams();
+  const navigate = useNavigate();
 
   const [movie, setMovie] = useState(null);
 
   useEffect(() => {
-    getDetails(movieId)
-      .then(
-        setMovie
-      )
-      .catch(console.error);
+    getDetails(movieId).then(setMovie).catch(console.error);
   }, [movieId]);
 
   return (
     <div>
       <section className="flex flex-col py-1.5 border-y border-gray-400">
-        <Link to="/" className="active:bg-cyan-200 mr-auto">
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="active:bg-cyan-200 mr-auto"
+        >
           Go back
-        </Link>
+        </button>
         <div className="flex flex-col md:flex-row gap-3">
           {!movie ? (
             <>
@@ -47,7 +48,11 @@ const MovieDetails = () => {
           ) : (
             <>
               <img
-                src={getImageUrl(movie.poster_path)}
+                src={
+                  movie.poster_path
+                    ? getImageUrl(movie.poster_path)
+                    : "https://cdn.pixabay.com/photo/2015/11/03/09/03/question-mark-1019993_640.jpg"
+                }
                 alt={movie.original_title}
                 className="w-50 h-auto object-cover"
               />
