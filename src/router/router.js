@@ -1,12 +1,8 @@
+
 import { createBrowserRouter } from "react-router";
 
 import App from "../App";
-import Home from "../components/pages/Home";
 import Movies from "../components/pages/Movies";
-import MovieDetails from "../components/pages/movies/MovieDetails";
-import MovieSearch from "../components/pages/movies/MovieSearch";
-import MovieDetailCast from "../components/pages/movies/MovieDetailCast";
-import MovieDetailReviews from "../components/pages/movies/MovieDetailReviews";
 
 const router = createBrowserRouter([
   {
@@ -16,9 +12,12 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        Component: Home,
+        lazy: async () => ({
+          Component: (
+            await import("../components/pages/Home")
+          ).default,
+        }),
       },
-
       {
         path: "movies",
         Component: Movies,
@@ -26,21 +25,46 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            Component: MovieSearch,
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "../components/pages/movies/MovieSearch"
+                )
+              ).default,
+            }),
           },
           {
             path: ":movieId",
-            Component: MovieDetails,
+            lazy: async () => ({
+              Component: (
+                await import(
+                  "../components/pages/movies/MovieDetails"
+                )
+              ).default,
+            }),
+
             children: [
-                {
-                    path: "cast",
-                    Component: MovieDetailCast,
-                },
-                {
-                    path: "reviews",
-                    Component: MovieDetailReviews,
-                },
-            ]
+              {
+                path: "cast",
+                lazy: async () => ({
+                  Component: (
+                    await import(
+                      "../components/pages/movies/MovieDetailCast"
+                    )
+                  ).default,
+                }),
+              },
+              {
+                path: "reviews",
+                lazy: async () => ({
+                  Component: (
+                    await import(
+                      "../components/pages/movies/MovieDetailReviews"
+                    )
+                  ).default,
+                }),
+              },
+            ],
           },
         ],
       },
